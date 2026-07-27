@@ -44,15 +44,13 @@ export default function Layout({ children }) {
                     <Link to="/dashboard" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${isActive('/dashboard') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'hover:bg-zinc-800 hover:text-white'}`}>
                         <span>Dashboard Overview</span>
                     </Link>
-                    <Link to="#" className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 hover:text-white rounded-xl font-medium transition-all">
-                        <span>Sales & Trips</span>
-                    </Link>
-                    <Link to="/companies" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${isActive('/companies') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'hover:bg-zinc-800 hover:text-white'}`}>
+                    
+                    <Link to="/companies" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${isActive('/companies') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'hover:bg-indigo-600 hover:text-white'}`}>
                         <span>Companies Management</span>      
                     </Link>
                     {user.userType === 'admin' && (
-                        <Link to="#" className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 hover:text-white rounded-xl font-medium transition-all">
-                            <span>User Management</span>
+                        <Link to="/salestable" className="flex items-center gap-3 px-4 py-3 hover:bg-indigo-600 hover:text-white rounded-xl font-medium transition-all">
+                            <span>Sales Details</span>
                         </Link>
                     )}
                     <Link to="#" className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 hover:text-white rounded-xl font-medium transition-all">
@@ -70,14 +68,11 @@ export default function Layout({ children }) {
                 </div>
             </aside>
 
-            {/* Main Content Area */}
             <main className="flex-1 flex flex-col overflow-hidden bg-slate-50 text-slate-800">
                 
-                {/* Common Header */}
                 <header className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-xs">
                     <div>
-                        <h1 className="text-2xl font-black text-slate-800">Taxipro Portal</h1>
-                        <p className="text-xs text-slate-400 mt-0.5">Welcome back, {user.userName}</p>
+                        <h1 className="text-5xl font-black text-slate-800">Welcome</h1>
                     </div>
                     
                     <div className="flex items-center gap-4 bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-2xl">
@@ -91,7 +86,6 @@ export default function Layout({ children }) {
                     </div>
                 </header>
 
-                {/* Page Specific Content Goes Here */}
                 <div className="flex-1 overflow-y-auto p-8">
                     {children}
                 </div>

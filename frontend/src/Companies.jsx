@@ -95,7 +95,7 @@ export default function Companies() {
                     <div>
                         <div className="flex items-center gap-2">
                         </div>
-                        <h2 className="text-3xl font-black mt-2 tracking-tight">Service Provider Directory</h2>                    </div>
+                        <h2 className="text-3xl font-bold tracking-tight">Service Provider Directory</h2>                    </div>
                     <div className="bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 text-center">
                         <p className="text-[10px] uppercase font-medium text-slate-300">Total Partners</p>
                         <p className="text-xl font-bold text-emerald-400">{companies.length}</p>

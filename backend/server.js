@@ -1,13 +1,12 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-require('dotenv').config(); // 1. Dotenv load karagannawa
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 2. Database connection eka .env variables walata connect karanawa
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -44,11 +43,10 @@ app.post('/api/login', (req, res) => {
         if (result.length > 0) {
             res.json({ success: true, user: result[0], message: "Login Successful" });
         } else {
-            res.status(401).json({ success: false, message: "Username hari Password hari waradiy!" });
+            res.status(401).json({ success: false, message: "Username or password error!" });
         }
     })
 });
-/// 1. READ COMPANIES (Database eke column name eka 'companyid' bawak confirm karaganna)
 app.get('/api/companies', (req, res) => {
     const sql = "SELECT * FROM tblcompany";
     db.query(sql, (err, results) => {
@@ -60,7 +58,6 @@ app.get('/api/companies', (req, res) => {
     });
 });
 
-// 2. ADD COMPANY (POST)
 app.post('/api/companies', (req, res) => {
     const { companyId, companyname, address, contact, email, fileCount, lastDocCount } = req.body;
 
@@ -75,7 +72,6 @@ app.post('/api/companies', (req, res) => {
     });
 });
 
-// UPDATE COMPANY - req.params.id eka kelinma query ekata danawa
 app.put('/api/companies/:id', (req, res) => {
     const { companyname, address, contact, email, fileCount, lastDocCount } = req.body;    
     
@@ -87,13 +83,59 @@ app.put('/api/companies/:id', (req, res) => {
     });
 });
 
-// DELETE COMPANY - req.params.id eka kelinma use karanawa
 app.delete('/api/companies/:id', (req, res) => {
     const sql = "DELETE FROM tblcompany WHERE companyId=?";
     
     db.query(sql, [req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ success: true, message: "Company deleted successfully!" });
+    });
+});
+app.post('/api/sales', (req, res) => {
+    const {
+        headerId, OperatorId, OperatorName, invoiceNumber,
+        vehicleNo, vehicleModel, transactionDate, transactionTime,
+        destination, paymentType, noOfVehicle, invoiceAmount,
+        cancellation, TotalAmount, DateTime
+    } = req.body;
+
+    const query = `
+        INSERT INTO tblsaleheader 
+        (headerId, OperatorId, OperatorName, invoiceNumber, vehicleNo, vehicleModel, transactionDate, transactionTime, destination, paymentType, noOfVehicle, invoiceAmount, cancellation, TotalAmount, DateTime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+        headerId, OperatorId, OperatorName, invoiceNumber,
+        vehicleNo, vehicleModel, transactionDate, transactionTime,
+        destination, paymentType, noOfVehicle, invoiceAmount,
+        cancellation, TotalAmount, DateTime
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
+        res.json({ success: true, message: "Sale record saved successfully!" });
+    });
+});
+
+app.get('/api/sales', (req, res) => {
+    const { userType, operatorName } = req.query;
+
+    let query = "SELECT * FROM tblsaleheader";
+    let params = [];
+    if (userType && userType !== 'admin' && operatorName) {
+        query += " WHERE OperatorName = ?";
+        params.push(operatorName);
+    }
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: err.message });
+        }
+        res.json(results);
     });
 });
 app.listen(5000, () => {
