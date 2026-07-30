@@ -53,7 +53,7 @@ export default function Layout({ children }) {
                             <span>Sales Details</span>
                         </Link>
                     )}
-                    <Link to="#" className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 hover:text-white rounded-xl font-medium transition-all">
+                    <Link to="Report" className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 hover:text-white rounded-xl font-medium transition-all">
                         <span>Reports & Analytics</span>
                     </Link>
                 </nav>

@@ -157,6 +157,8 @@ app.get('/api/sales', (req, res) => {
         res.json(results);
     });
 });
+const reportRoutes = require('./ReportRoutes')(db);
+app.use('/api', reportRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
