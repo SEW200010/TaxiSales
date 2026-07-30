@@ -21,17 +21,8 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL Database successfully.');
 });
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-
-db.connect(err => {
-    if(err) console.error('Database connection failed:', err);
-    else console.log('Connected to MySQL Database');
-});
+// --- 1. LOGIN API ---
 app.post('/api/login', (req, res) => {
     const { userName, password } = req.body;
     
@@ -45,8 +36,10 @@ app.post('/api/login', (req, res) => {
         } else {
             res.status(401).json({ success: false, message: "Username or password error!" });
         }
-    })
+    });
 });
+
+// --- 2. GET COMPANIES API ---
 app.get('/api/companies', (req, res) => {
     const sql = "SELECT * FROM tblcompany";
     db.query(sql, (err, results) => {
@@ -58,9 +51,9 @@ app.get('/api/companies', (req, res) => {
     });
 });
 
+// --- 3. ADD COMPANY API ---
 app.post('/api/companies', (req, res) => {
     const { companyId, companyname, address, contact, email, fileCount, lastDocCount } = req.body;
-
     const sql = "INSERT INTO tblcompany (companyId, companyname, address, contact, email, fileCount, lastDocCount) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
     db.query(sql, [companyId, companyname, address, contact, email, fileCount, lastDocCount], (err, result) => {
@@ -72,9 +65,9 @@ app.post('/api/companies', (req, res) => {
     });
 });
 
+// --- 4. UPDATE COMPANY API ---
 app.put('/api/companies/:id', (req, res) => {
     const { companyname, address, contact, email, fileCount, lastDocCount } = req.body;    
-    
     const sql = "UPDATE tblcompany SET companyname=?, address=?, contact=?, email=?, fileCount=?, lastDocCount=? WHERE companyId=?";
     
     db.query(sql, [companyname, address, contact, email, fileCount, lastDocCount, req.params.id], (err, result) => {
@@ -83,6 +76,7 @@ app.put('/api/companies/:id', (req, res) => {
     });
 });
 
+// --- 5. DELETE COMPANY API ---
 app.delete('/api/companies/:id', (req, res) => {
     const sql = "DELETE FROM tblcompany WHERE companyId=?";
     
@@ -91,6 +85,8 @@ app.delete('/api/companies/:id', (req, res) => {
         res.json({ success: true, message: "Company deleted successfully!" });
     });
 });
+
+// --- 6. ADD SALES API ---
 app.post('/api/sales', (req, res) => {
     const {
         headerId, OperatorId, OperatorName, invoiceNumber,
@@ -120,24 +116,49 @@ app.post('/api/sales', (req, res) => {
         res.json({ success: true, message: "Sale record saved successfully!" });
     });
 });
-
+// --- GET SALES WITH COMPANY NAME JOIN API ---
 app.get('/api/sales', (req, res) => {
-    const { userType, operatorName } = req.query;
+    const { userType, companyId } = req.query;
 
-    let query = "SELECT * FROM tblsaleheader";
+    // tblsaleheader table eke OperatorId eka, tblcompany table eke companyId ekka match karala companyname eka gannawa
+    let query = `
+        SELECT 
+            s.headerId, 
+            s.OperatorId, 
+            c.companyname as OperatorName, 
+            s.invoiceNumber, 
+            s.vehicleNo, 
+            s.vehicleModel, 
+            s.transactionDate, 
+            s.transactionTime, 
+            s.destination, 
+            s.paymentType, 
+            s.noOfVehicle, 
+            s.invoiceAmount, 
+            s.cancellation, 
+            s.TotalAmount, 
+            s.DateTime 
+        FROM tblsaleheader s 
+        LEFT JOIN tblcompany c ON s.OperatorId = c.companyId
+    `;
     let params = [];
-    if (userType && userType !== 'admin' && operatorName) {
-        query += " WHERE OperatorName = ?";
-        params.push(operatorName);
+
+    // Normal user kenek nam eyaage companyId eka witharak filter karanawa
+    if (userType && userType !== 'admin' && companyId) {
+        query += " WHERE s.OperatorId = ?";
+        params.push(companyId);
     }
 
     db.query(query, params, (err, results) => {
         if (err) {
+            console.error("Sales Fetch Error:", err.message);
             return res.status(500).json({ success: false, error: err.message });
         }
         res.json(results);
     });
 });
-app.listen(5000, () => {
-    console.log('Backend server running on port 5000');
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Backend server running on port ${PORT}`);
 });
