@@ -19,7 +19,8 @@ export default function App() {
                 {/* 3. Companies Management Page */}
                 <Route path="/companies" element={<Companies />} />
 
-<Route path="/companies/Report" element={<Report />} />                <Route path="/salestable" element={<SalesTable />} />
+                <Route path="/companies/Report" element={<Report />} />
+                <Route path="/salestable" element={<SalesTable />} />
                     <Route path="/salestable/Report" element={<Report />} />
                 {/* 5. Reports Page */}
                 <Route path="/reports" element={<Report />} />

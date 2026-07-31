@@ -120,7 +120,6 @@ app.post('/api/sales', (req, res) => {
 app.get('/api/sales', (req, res) => {
     const { userType, companyId } = req.query;
 
-    // tblsaleheader table eke OperatorId eka, tblcompany table eke companyId ekka match karala companyname eka gannawa
     let query = `
         SELECT 
             s.headerId, 
@@ -143,7 +142,6 @@ app.get('/api/sales', (req, res) => {
     `;
     let params = [];
 
-    // Normal user kenek nam eyaage companyId eka witharak filter karanawa
     if (userType && userType !== 'admin' && companyId) {
         query += " WHERE s.OperatorId = ?";
         params.push(companyId);
